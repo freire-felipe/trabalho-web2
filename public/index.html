@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal de Jogos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="hero">
+    <div>
+      <span class="tag">CRUD com Node.js + SQLite</span>
+      <h1>Portal de Jogos</h1>
+      <p>Busque, filtre, cadastre e edite jogos em um portal simples feito para apresentacao academica.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="painel filtros">
+      <div class="campo grande">
+        <label for="busca">Buscar jogo</label>
+        <input id="busca" type="search" placeholder="Ex: Zelda, RPG, corrida...">
+      </div>
+
+      <div class="campo">
+        <label for="filtroCategoria">Categoria</label>
+        <select id="filtroCategoria">
+          <option value="">Todas</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="filtroPlataforma">Plataforma</label>
+        <input id="filtroPlataforma" type="text" placeholder="PC, Xbox...">
+      </div>
+
+      <div class="campo pequeno">
+        <label for="filtroNota">Nota minima</label>
+        <input id="filtroNota" type="number" min="0" max="10" step="0.1" placeholder="8">
+      </div>
+    </section>
+
+    <section class="layout">
+      <div>
+        <div class="titulo-secao">
+          <h2>Jogos cadastrados</h2>
+          <span id="contadorJogos">0 jogos</span>
+        </div>
+        <div id="listaJogos" class="grid-jogos"></div>
+      </div>
+
+      <aside class="sidebar">
+        <form id="formJogo" class="painel form">
+          <h2 id="tituloFormJogo">Cadastrar jogo</h2>
+          <input type="hidden" id="jogoId">
+
+          <label>Titulo
+            <input id="titulo" required minlength="2" type="text" placeholder="Nome do jogo">
+          </label>
+
+          <label>Descricao
+            <textarea id="descricao" required minlength="5" rows="3" placeholder="Resumo do jogo"></textarea>
+          </label>
+
+          <div class="duas-colunas">
+            <label>Genero
+              <input id="genero" required type="text" placeholder="RPG">
+            </label>
+
+            <label>Plataforma
+              <input id="plataforma" required type="text" placeholder="PC">
+            </label>
+          </div>
+
+          <div class="duas-colunas">
+            <label>Ano
+              <input id="ano_lancamento" required type="number" min="1970" max="2030">
+            </label>
+
+            <label>Nota
+              <input id="nota" required type="number" min="0" max="10" step="0.1">
+            </label>
+          </div>
+
+          <label>URL da imagem
+            <input id="imagem_url" type="url" placeholder="https://...">
+          </label>
+
+          <label>Categoria
+            <select id="categoria_id" required></select>
+          </label>
+
+          <div class="acoes-form">
+            <button type="submit">Salvar jogo</button>
+            <button id="cancelarEdicao" type="button" class="secundario escondido">Cancelar</button>
+          </div>
+
+          <p id="mensagemJogo" class="mensagem"></p>
+        </form>
+
+        <form id="formCategoria" class="painel form">
+          <h2>Categorias</h2>
+          <input type="hidden" id="categoriaEditId">
+
+          <label>Nome
+            <input id="nomeCategoria" required minlength="2" type="text" placeholder="Ex: RPG">
+          </label>
+
+          <label>Descricao
+            <textarea id="descricaoCategoria" rows="2" placeholder="Descricao da categoria"></textarea>
+          </label>
+
+          <button type="submit">Salvar categoria</button>
+          <p id="mensagemCategoria" class="mensagem"></p>
+          <ul id="listaCategorias" class="lista-categorias"></ul>
+        </form>
+      </aside>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

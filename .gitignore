@@ -1,0 +1,4 @@
+node_modules/
+portal-jogos.db
+.env
+npm-debug.log*

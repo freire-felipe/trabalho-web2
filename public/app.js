@@ -80,7 +80,6 @@ function renderizarJogos() {
         <h3>${escapar(jogo.titulo)}</h3>
         <p>${escapar(jogo.descricao)}</p>
         <ul class="detalhes-jogo">
-          <li><strong>Categoria:</strong> ${escapar(jogo.categoria_nome)}</li>
           <li><strong>Genero:</strong> ${escapar(jogo.genero)}</li>
           <li><strong>Modelo:</strong> ${escapar(jogo.plataforma)}</li>
           <li><strong>Ano:</strong> ${jogo.ano_lancamento}</li>

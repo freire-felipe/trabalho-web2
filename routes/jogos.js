@@ -3,16 +3,24 @@ const db = require('../database');
 
 const router = express.Router();
 
+function somenteAdmin(req, res, next) {
+  if (req.headers['x-user-role'] !== 'admin') {
+    return res.status(403).json({ erro: 'Apenas o administrador pode cadastrar, editar ou excluir jogos.' });
+  }
+
+  next();
+}
+
 function validarJogo(dados) {
   const anoAtual = new Date().getFullYear() + 1;
   const ano = Number(dados.ano_lancamento);
   const nota = Number(dados.nota);
 
-  if (!dados.titulo || dados.titulo.trim().length < 2) return 'O titulo deve ter pelo menos 2 caracteres.';
-  if (!dados.descricao || dados.descricao.trim().length < 5) return 'A descricao deve ter pelo menos 5 caracteres.';
-  if (!dados.genero || dados.genero.trim().length < 2) return 'O genero e obrigatorio.';
-  if (!dados.plataforma || dados.plataforma.trim().length < 2) return 'A plataforma e obrigatoria.';
-  if (!Number.isInteger(ano) || ano < 1970 || ano > anoAtual) return 'Informe um ano de lancamento valido.';
+  if (!dados.titulo || dados.titulo.trim().length < 2) return 'O título deve ter pelo menos 2 caracteres.';
+  if (!dados.descricao || dados.descricao.trim().length < 5) return 'A descrição deve ter pelo menos 5 caracteres.';
+  if (!dados.genero || dados.genero.trim().length < 2) return 'O gênero é obrigatório.';
+  if (!dados.plataforma || dados.plataforma.trim().length < 2) return 'A plataforma é obrigatória.';
+  if (!Number.isInteger(ano) || ano < 1970 || ano > anoAtual) return 'Informe um ano de lançamento válido.';
   if (Number.isNaN(nota) || nota < 0 || nota > 10) return 'A nota deve estar entre 0 e 10.';
   if (!dados.categoria_id) return 'Selecione uma categoria.';
 
@@ -76,19 +84,19 @@ router.get('/:id', (req, res) => {
 
   db.get(sql, [req.params.id], (erro, jogo) => {
     if (erro) return res.status(500).json({ erro: erro.message });
-    if (!jogo) return res.status(404).json({ erro: 'Jogo nao encontrado.' });
+    if (!jogo) return res.status(404).json({ erro: 'Jogo não encontrado.' });
     res.json(jogo);
   });
 });
 
-router.post('/', (req, res) => {
+router.post('/', somenteAdmin, (req, res) => {
   const erroValidacao = validarJogo(req.body);
   if (erroValidacao) return res.status(400).json({ erro: erroValidacao });
 
   salvarJogo(req, res, 'insert');
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', somenteAdmin, (req, res) => {
   const erroValidacao = validarJogo(req.body);
   if (erroValidacao) return res.status(400).json({ erro: erroValidacao });
 
@@ -100,7 +108,7 @@ function salvarJogo(req, res, modo) {
 
   db.get('SELECT id FROM categorias WHERE id = ?', [dados.categoria_id], (erro, categoria) => {
     if (erro) return res.status(500).json({ erro: erro.message });
-    if (!categoria) return res.status(400).json({ erro: 'A categoria informada nao existe.' });
+    if (!categoria) return res.status(400).json({ erro: 'A categoria informada não existe.' });
 
     if (modo === 'insert') {
       const sql = `
@@ -124,7 +132,7 @@ function salvarJogo(req, res, modo) {
 
     db.run(sql, [...Object.values(dados), req.params.id], function (erroUpdate) {
       if (erroUpdate) return res.status(500).json({ erro: erroUpdate.message });
-      if (this.changes === 0) return res.status(404).json({ erro: 'Jogo nao encontrado.' });
+      if (this.changes === 0) return res.status(404).json({ erro: 'Jogo não encontrado.' });
       res.json({ id: Number(req.params.id), ...dados });
     });
   });
@@ -143,11 +151,11 @@ function prepararDados(dados) {
   };
 }
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', somenteAdmin, (req, res) => {
   db.run('DELETE FROM jogos WHERE id = ?', [req.params.id], function (erro) {
     if (erro) return res.status(500).json({ erro: erro.message });
-    if (this.changes === 0) return res.status(404).json({ erro: 'Jogo nao encontrado.' });
-    res.json({ mensagem: 'Jogo excluido com sucesso.' });
+    if (this.changes === 0) return res.status(404).json({ erro: 'Jogo não encontrado.' });
+    res.json({ mensagem: 'Jogo excluído com sucesso.' });
   });
 });
 

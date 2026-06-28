@@ -1,8 +1,8 @@
 # Portal de Jogos
 
-Aplicacao CRUD feita com Node.js, Express.js, SQLite, HTML, CSS e JavaScript puro.
+Portal para buscar, filtrar e gerenciar informações de jogos.
 
-O sistema gerencia duas colecoes relacionadas:
+O sistema gerencia duas coleções relacionadas:
 
 - Categorias
 - Jogos
@@ -13,12 +13,13 @@ Cada jogo pertence a uma categoria.
 
 - Listagem de jogos
 - Busca de jogos em tempo real
-- Filtros por categoria, plataforma e nota minima
-- Cadastro, edicao e exclusao de jogos
-- Cadastro, edicao e exclusao de categorias
-- Validacao de dados no front-end e no back-end
-- Persistencia em banco de dados local SQLite
-- Dados iniciais cadastrados automaticamente na primeira execucao
+- Filtros por categoria, plataforma e nota mínima
+- Login simples de administrador
+- Cadastro, edição e exclusão de jogos
+- Cadastro, edição e exclusão de categorias
+- Validação de dados no front-end e no back-end
+- Persistência em banco de dados local
+- Dados iniciais cadastrados automaticamente na primeira execução
 
 ## Como Executar
 
@@ -44,6 +45,15 @@ Acesse no navegador:
 
 ```txt
 http://localhost:3000
+```
+
+## Login
+
+Administrador, pode cadastrar, editar e excluir jogos:
+
+```txt
+usuário: admin
+senha: admin
 ```
 
 ## Rotas Principais Da API

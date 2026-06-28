@@ -12,13 +12,39 @@
 <body>
   <header class="hero">
     <div>
-      <span class="tag">CRUD com Node.js + SQLite</span>
       <h1>Portal de Jogos</h1>
-      <p>Busque, filtre, cadastre e edite jogos em um portal simples feito para apresentacao academica.</p>
+      <p>Busque, filtre e veja informações dos jogos cadastrados no portal.</p>
+    </div>
+
+    <div class="header-admin">
+      <button id="abrirLogin" type="button">Login</button>
+      <div id="usuarioLogado" class="usuario-logado escondido"></div>
     </div>
   </header>
 
   <main class="container">
+    <div id="modalLogin" class="modal escondido">
+      <form id="formLogin" class="modal-login">
+        <div class="modal-topo">
+          <h2>Login</h2>
+          <button id="fecharLogin" type="button" class="secundario">Fechar</button>
+        </div>
+
+        <p>Acesse sua conta para gerenciar o portal.</p>
+
+        <label>Usuário
+          <input id="usuarioLogin" type="text" placeholder="admin" required>
+        </label>
+
+        <label>Senha
+          <input id="senhaLogin" type="password" placeholder="admin" required>
+        </label>
+
+        <button type="submit">Entrar</button>
+        <p id="mensagemLogin" class="mensagem"></p>
+      </form>
+    </div>
+
     <section class="painel filtros">
       <div class="campo grande">
         <label for="busca">Buscar jogo</label>
@@ -38,7 +64,7 @@
       </div>
 
       <div class="campo pequeno">
-        <label for="filtroNota">Nota minima</label>
+        <label for="filtroNota">Nota mínima</label>
         <input id="filtroNota" type="number" min="0" max="10" step="0.1" placeholder="8">
       </div>
     </section>
@@ -47,78 +73,122 @@
       <div>
         <div class="titulo-secao">
           <h2>Jogos cadastrados</h2>
-          <span id="contadorJogos">0 jogos</span>
+          <div class="acoes-topo">
+            <span id="contadorJogos">0 jogos</span>
+            <button id="btnNovoJogo" type="button" class="escondido">Cadastrar jogo</button>
+          </div>
         </div>
         <div id="listaJogos" class="grid-jogos"></div>
       </div>
-
-      <aside class="sidebar">
-        <form id="formJogo" class="painel form">
-          <h2 id="tituloFormJogo">Cadastrar jogo</h2>
-          <input type="hidden" id="jogoId">
-
-          <label>Titulo
-            <input id="titulo" required minlength="2" type="text" placeholder="Nome do jogo">
-          </label>
-
-          <label>Descricao
-            <textarea id="descricao" required minlength="5" rows="3" placeholder="Resumo do jogo"></textarea>
-          </label>
-
-          <div class="duas-colunas">
-            <label>Genero
-              <input id="genero" required type="text" placeholder="RPG">
-            </label>
-
-            <label>Plataforma
-              <input id="plataforma" required type="text" placeholder="PC">
-            </label>
-          </div>
-
-          <div class="duas-colunas">
-            <label>Ano
-              <input id="ano_lancamento" required type="number" min="1970" max="2030">
-            </label>
-
-            <label>Nota
-              <input id="nota" required type="number" min="0" max="10" step="0.1">
-            </label>
-          </div>
-
-          <label>URL da imagem
-            <input id="imagem_url" type="url" placeholder="https://...">
-          </label>
-
-          <label>Categoria
-            <select id="categoria_id" required></select>
-          </label>
-
-          <div class="acoes-form">
-            <button type="submit">Salvar jogo</button>
-            <button id="cancelarEdicao" type="button" class="secundario escondido">Cancelar</button>
-          </div>
-
-          <p id="mensagemJogo" class="mensagem"></p>
-        </form>
-
-        <form id="formCategoria" class="painel form">
-          <h2>Categorias</h2>
-          <input type="hidden" id="categoriaEditId">
-
-          <label>Nome
-            <input id="nomeCategoria" required minlength="2" type="text" placeholder="Ex: RPG">
-          </label>
-
-          <label>Descricao
-            <textarea id="descricaoCategoria" rows="2" placeholder="Descricao da categoria"></textarea>
-          </label>
-
-          <button type="submit">Salvar categoria</button>
-          <p id="mensagemCategoria" class="mensagem"></p>
-          <ul id="listaCategorias" class="lista-categorias"></ul>
-        </form>
-      </aside>
     </section>
+
+    <div id="modalAdmin" class="modal escondido">
+      <div class="modal-conteudo">
+        <div class="modal-topo">
+          <h2>Gerenciamento</h2>
+          <button id="fecharModal" type="button" class="secundario">Fechar</button>
+        </div>
+
+        <div class="modal-grid">
+          <form id="formJogo" class="painel form">
+            <h2 id="tituloFormJogo">Cadastrar jogo</h2>
+            <input type="hidden" id="jogoId">
+
+            <label>Título
+              <input id="titulo" required minlength="2" type="text" placeholder="Nome do jogo">
+            </label>
+
+            <label>Descrição
+              <textarea id="descricao" required minlength="5" rows="3" placeholder="Resumo do jogo"></textarea>
+            </label>
+
+            <div class="duas-colunas">
+              <div class="campo-form">
+                <span>Gênero</span>
+                <div class="multi-select" data-campo="genero">
+                  <button type="button" class="multi-select-botao">Selecione</button>
+                  <div class="multi-select-opcoes">
+                    <label><input type="checkbox" value="Ação"> Ação</label>
+                    <label><input type="checkbox" value="Aventura"> Aventura</label>
+                    <label><input type="checkbox" value="Corrida"> Corrida</label>
+                    <label><input type="checkbox" value="Estratégia"> Estratégia</label>
+                    <label><input type="checkbox" value="RPG"> RPG</label>
+                    <label><input type="checkbox" value="Sandbox"> Sandbox</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="campo-form">
+                <span>Plataforma</span>
+                <div class="multi-select" data-campo="plataforma">
+                  <button type="button" class="multi-select-botao">Selecione</button>
+                  <div class="multi-select-opcoes">
+                    <label><input type="checkbox" value="PC"> PC</label>
+                    <label><input type="checkbox" value="PlayStation"> PlayStation</label>
+                    <label><input type="checkbox" value="Xbox"> Xbox</label>
+                    <label><input type="checkbox" value="Nintendo Switch"> Nintendo Switch</label>
+                    <label><input type="checkbox" value="Mobile"> Mobile</label>
+                    <label><input type="checkbox" value="Multiplataforma"> Multiplataforma</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="duas-colunas">
+              <label>Ano
+                <input id="ano_lancamento" required type="number" min="1970" max="2030">
+              </label>
+
+              <label>Nota
+                <input id="nota" required type="number" min="0" max="10" step="0.1">
+              </label>
+            </div>
+
+            <label>Imagem
+              <input id="imagem_arquivo" type="file" accept="image/jpeg,image/png">
+            </label>
+
+            <input type="hidden" id="categoria_id">
+
+            <div class="acoes-form">
+              <button type="submit">Salvar jogo</button>
+              <button id="cancelarEdicao" type="button" class="secundario escondido">Limpar</button>
+            </div>
+
+            <p id="mensagemJogo" class="mensagem"></p>
+          </form>
+
+          <form id="formCategoria" class="painel form">
+            <h2>Categorias</h2>
+            <input type="hidden" id="categoriaEditId">
+
+            <label>Nome
+              <input id="nomeCategoria" required minlength="2" type="text" placeholder="Ex: RPG">
+            </label>
+
+            <label>Descrição
+              <textarea id="descricaoCategoria" rows="2" placeholder="Descrição da categoria"></textarea>
+            </label>
+
+            <button type="submit">Salvar categoria</button>
+            <p id="mensagemCategoria" class="mensagem"></p>
+            <ul id="listaCategorias" class="lista-categorias"></ul>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div id="modalConfirmacao" class="modal escondido">
+      <div class="modal-confirmacao">
+        <h2 id="tituloConfirmacao">Confirmar exclusão</h2>
+        <p id="textoConfirmacao">Deseja excluir este item?</p>
+
+        <div class="acoes-form">
+          <button id="confirmarExclusao" type="button" class="perigo">Excluir</button>
+          <button id="cancelarExclusao" type="button" class="secundario">Cancelar</button>
+        </div>
+      </div>
+    </div>
   </main>
 
   <script src="app.js"></script>
